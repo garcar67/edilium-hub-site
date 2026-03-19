@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0a0f0f;color:#ffffff;max-width:1440px;margin:0 auto}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:700}
+
+.fade-up{opacity:0;transform:translateY(40px);transition:opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.fade-up-d1{transition-delay:0.1s}
+.fade-up-d2{transition-delay:0.2s}
+.fade-up-d3{transition-delay:0.3s}
+.fade-up-d4{transition-delay:0.4s}
+.fade-left{opacity:0;transform:translateX(-40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.fade-left.visible{opacity:1;transform:translateX(0)}
+.fade-right{opacity:0;transform:translateX(40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.fade-right.visible{opacity:1;transform:translateX(0)}
+.scale-in{opacity:0;transform:scale(0.9);transition:opacity 0.6s ease,transform 0.6s ease}
+.scale-in.visible{opacity:1;transform:scale(1)}
+
+@media(prefers-reduced-motion:reduce){.fade-up,.fade-left,.fade-right,.scale-in{opacity:1;transform:none;transition:none}}
+
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:20px 80px;background:rgba(10,15,15,0.95);border-bottom:1px solid rgba(79,108,108,0.15);position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:padding 0.3s ease,background 0.3s ease}
+.navbar.scrolled{padding:14px 80px;background:rgba(10,15,15,0.98)}
+.nav-logo svg{height:36px;width:auto}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-link{font-size:14px;color:rgba(255,255,255,0.5);font-weight:500;text-decoration:none;letter-spacing:0.3px;transition:color 0.3s ease}
+.nav-link:hover{color:#F9C441}
+.nav-cta{font-size:14px;font-weight:600;color:#0a0f0f;background:#F9C441;padding:12px 28px;border-radius:100px;text-decoration:none;letter-spacing:0.3px;transition:transform 0.3s ease,box-shadow 0.3s ease}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,196,65,0.25)}
+
+.hero{display:flex;align-items:center;justify-content:space-between;padding:100px 80px 120px;background:#0a0f0f;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-200px;right:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(249,196,65,0.06) 0%,transparent 70%);pointer-events:none}
+.hero-glow-2{position:absolute;bottom:-200px;left:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(79,108,108,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-left{display:flex;flex-direction:column;gap:32px;max-width:660px;position:relative;z-index:1}
+.hero-badge{display:flex;align-items:center;gap:10px;background:rgba(249,196,65,0.08);border:1px solid rgba(249,196,65,0.2);border-radius:100px;padding:8px 20px;align-self:flex-start}
+.hero-badge-dot{width:8px;height:8px;border-radius:50%;background:#F9C441}
+.hero-badge-text{font-size:13px;color:#F9C441;font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
+.hero-title{font-size:72px;line-height:1.02;letter-spacing:-3px}
+.hero-highlight{color:#F9C441;font-style:italic;font-weight:400}
+.hero-sub{font-size:19px;color:rgba(255,255,255,0.4);line-height:1.8;font-weight:300;max-width:500px}
+.hero-buttons{display:flex;gap:16px}
+.btn-gold{display:flex;align-items:center;gap:8px;background:#F9C441;color:#0a0f0f;padding:18px 36px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:0.3px;transition:transform 0.3s ease,box-shadow 0.3s ease}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(249,196,65,0.3)}
+.btn-outline{display:flex;align-items:center;gap:8px;background:transparent;border:1.5px solid rgba(79,108,108,0.4);color:#fff;padding:18px 36px;border-radius:100px;font-size:15px;font-weight:500;text-decoration:none;transition:border-color 0.3s ease,color 0.3s ease,transform 0.3s ease}
+.btn-outline:hover{border-color:#F9C441;color:#F9C441;transform:translateY(-2px)}
+.hero-stats{display:flex;gap:56px;padding-top:48px;border-top:1px solid rgba(255,255,255,0.06)}
+.stat{display:flex;flex-direction:column;gap:6px}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;color:#F9C441;line-height:1}
+.stat-lab{font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hero-right{display:flex;flex-direction:column;gap:14px;width:400px;position:relative;z-index:1}
+.h-card{display:flex;align-items:center;gap:16px;background:rgba(79,108,108,0.06);border:1px solid rgba(79,108,108,0.12);border-radius:16px;padding:22px 24px;transition:transform 0.3s ease,border-color 0.3s ease,background 0.3s ease}
+.h-card:hover{transform:translateY(-4px);border-color:rgba(249,196,65,0.2);background:rgba(249,196,65,0.04)}
+.h-card-icon{width:44px;height:44px;border-radius:12px;background:rgba(249,196,65,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:#F9C441;flex-shrink:0}
+.h-card-body{display:flex;flex-direction:column;gap:2px}
+.h-card-t{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600}
+.h-card-d{font-size:13px;color:rgba(255,255,255,0.35);line-height:1.5}
+
+.section{padding:120px 80px}
+.s-header{display:flex;flex-direction:column;gap:16px;margin-bottom:64px}
+.s-label{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#4F6C6C}
+.s-title{font-size:48px;letter-spacing:-1.5px;line-height:1.1;max-width:620px}
+.s-sub{font-size:17px;color:rgba(255,255,255,0.35);line-height:1.8;max-width:480px;font-weight:300}
+
+.chi-siamo{background:#0d1313}
+.chi-grid{display:flex;gap:32px}
+.chi-left{display:flex;flex-direction:column;gap:16px;flex:1}
+.v-card{display:flex;align-items:flex-start;gap:20px;background:rgba(255,255,255,0.02);border:1px solid rgba(79,108,108,0.1);border-radius:20px;padding:32px;transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease}
+.v-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.3);border-color:rgba(79,108,108,0.25)}
+.v-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.v-icon-gold{background:rgba(249,196,65,0.1);color:#F9C441}
+.v-icon-teal{background:rgba(79,108,108,0.15);color:#7fa3a3}
+.v-icon-green{background:rgba(34,197,94,0.1);color:#4ade80}
+.v-body{display:flex;flex-direction:column;gap:8px}
+.v-t{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600}
+.v-p{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.8}
+.chi-right{display:flex;flex-direction:column;gap:16px;flex:1}
+.diff-box{background:rgba(79,108,108,0.06);border:1px solid rgba(79,108,108,0.15);border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:24px;flex:1}
+.diff-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;color:#F9C441}
+.diff-list{display:flex;flex-direction:column;gap:16px;list-style:none}
+.diff-item{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.7}
+.diff-dot{width:6px;height:6px;border-radius:50%;background:#F9C441;flex-shrink:0;margin-top:8px}
+.vant-box{background:linear-gradient(135deg,#4F6C6C,#3d5555);border-radius:20px;padding:36px;display:flex;flex-direction:column;gap:10px}
+.vant-t{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#F9C441}
+.vant-p{font-size:15px;color:rgba(255,255,255,0.8);line-height:1.7}
+
+.servizi{background:#0a0f0f}
+.srv-wrap{display:flex;flex-wrap:wrap;gap:16px}
+.srv{display:flex;flex-direction:column;align-items:center;gap:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(79,108,108,0.1);border-radius:20px;padding:36px 20px;text-align:center;width:calc(25% - 12px);transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease}
+.srv:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,0.3);border-color:rgba(249,196,65,0.15)}
+.srv-i{width:52px;height:52px;border-radius:14px;background:rgba(249,196,65,0.08);display:flex;align-items:center;justify-content:center;font-size:22px;color:#F9C441}
+.srv-t{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600}
+.srv-d{font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6}
+.srv-big{width:calc(50% - 8px);background:linear-gradient(160deg,rgba(249,196,65,0.06),rgba(79,108,108,0.04));border:1px solid rgba(249,196,65,0.12);padding:44px 36px;flex-direction:row;align-items:center;gap:28px;text-align:left}
+.srv-big .srv-i{width:64px;height:64px;border-radius:18px;font-size:28px;flex-shrink:0;background:rgba(249,196,65,0.12)}
+.srv-big-body{display:flex;flex-direction:column;gap:8px}
+.srv-big .srv-t{font-size:20px}
+.srv-big .srv-d{font-size:14px;color:rgba(255,255,255,0.45)}
+
+.metodo{background:#0d1313}
+.m-steps{display:flex;gap:20px}
+.m-s{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1;text-align:center;padding:36px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(79,108,108,0.08);border-radius:20px;transition:transform 0.3s ease,border-color 0.3s ease}
+.m-s:hover{transform:translateY(-4px);border-color:rgba(249,196,65,0.2)}
+.m-n{width:52px;height:52px;border-radius:50%;background:rgba(249,196,65,0.08);border:2px solid rgba(249,196,65,0.3);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#F9C441}
+.m-t{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:#F9C441}
+.m-d{font-size:13px;color:rgba(255,255,255,0.35);line-height:1.8}
+.m-arr{display:flex;align-items:center;justify-content:center;color:rgba(79,108,108,0.3);font-size:20px;padding:0 4px;align-self:center}
+
+.target{background:#0a0f0f}
+.t-cards{display:flex;gap:24px}
+.t-c{display:flex;flex-direction:column;align-items:center;gap:20px;flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(79,108,108,0.1);border-radius:24px;padding:48px 32px;text-align:center;transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease}
+.t-c:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,0.3);border-color:rgba(249,196,65,0.15)}
+.t-ic{width:72px;height:72px;border-radius:20px;background:rgba(249,196,65,0.08);display:flex;align-items:center;justify-content:center;font-size:32px}
+.t-t{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600}
+.t-d{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.8}
+
+.team{background:#0d1313}
+.tm-cards{display:flex;gap:24px}
+.tm-c{display:flex;align-items:center;gap:24px;background:rgba(255,255,255,0.02);border:1px solid rgba(79,108,108,0.1);border-radius:20px;padding:36px;flex:1;transition:transform 0.3s ease,border-color 0.3s ease}
+.tm-c:hover{transform:translateY(-4px);border-color:rgba(249,196,65,0.2)}
+.tm-av{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#F9C441,#e0a820);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:#0a0f0f;flex-shrink:0}
+.tm-info{display:flex;flex-direction:column;gap:4px}
+.tm-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600}
+.tm-role{font-size:13px;color:#F9C441;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+
+.cta{background:linear-gradient(180deg,#0a0f0f 0%,#111a1a 50%,#0a0f0f 100%);padding:120px 80px;display:flex;flex-direction:column;align-items:center;gap:28px;text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;top:-150px;left:50%;margin-left:-300px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(249,196,65,0.05) 0%,transparent 60%);pointer-events:none}
+.cta-t{font-size:56px;letter-spacing:-2px;line-height:1.05;position:relative;z-index:1}
+.cta-s{font-size:18px;color:rgba(255,255,255,0.35);max-width:440px;font-weight:300;line-height:1.7;position:relative;z-index:1}
+.cta-btns{display:flex;gap:16px;position:relative;z-index:1}
+
+.footer{background:#0a0f0f;padding:48px 80px;border-top:1px solid rgba(79,108,108,0.1);display:flex;justify-content:space-between;align-items:center}
+.ft-logo svg{height:28px;width:auto}
+.ft-links{display:flex;gap:32px}
+.ft-link{font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none}
+.ft-copy{background:#0a0f0f;padding:20px 80px;text-align:center;font-size:12px;color:rgba(255,255,255,0.15)}
+
+/* HAMBURGER MENU */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;z-index:200}
+.nav-hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease}
+.nav-hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.active span:nth-child(2){opacity:0}
+.nav-hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* === TABLET (max 1024px) === */
+@media(max-width:1024px){
+body{max-width:100%}
+.fade-left,.fade-right,.scale-in{opacity:0;transform:translateY(40px);transition:opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.fade-left.visible,.fade-right.visible,.scale-in.visible{opacity:1;transform:translateY(0)}
+.navbar{padding:16px 32px}
+.navbar.scrolled{padding:12px 32px}
+.hero{padding:100px 32px 80px;flex-direction:column;gap:48px}
+.hero-left{max-width:100%}
+.hero-title{font-size:52px;letter-spacing:-2px}
+.hero-sub{font-size:17px}
+.hero-right{width:100%;flex-direction:row;flex-wrap:wrap;gap:12px}
+.h-card{width:calc(50% - 6px)}
+.hero-stats{gap:32px}
+.stat-num{font-size:36px}
+.section{padding:80px 32px}
+.s-title{font-size:38px}
+.chi-grid{flex-direction:column;gap:24px}
+.srv-wrap{gap:14px}
+.srv{width:calc(50% - 7px);padding:28px 16px}
+.srv-big{width:100%}
+.m-steps{flex-wrap:wrap;gap:16px}
+.m-s{width:calc(50% - 8px);flex:none}
+.m-arr{display:none}
+.t-cards{flex-direction:column;gap:20px}
+.tm-cards{flex-direction:column;gap:16px}
+.cta{padding:80px 32px}
+.cta-t{font-size:42px}
+.footer{padding:32px;flex-direction:column;gap:20px;text-align:center}
+.ft-links{flex-direction:column;gap:12px;align-items:center}
+.ft-copy{padding:16px 32px}
+}
+
+/* === MOBILE (max 768px) === */
+@media(max-width:768px){
+.navbar{padding:14px 20px}
+.navbar.scrolled{padding:10px 20px}
+.nav-links{position:fixed;top:0;left:0;right:0;height:100vh;background:rgba(10,15,15,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);flex-direction:column;align-items:center;justify-content:center;gap:36px;transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.4s ease;z-index:150}
+.nav-links.open{transform:translateY(0);opacity:1;pointer-events:all}
+.nav-links a{font-size:22px;color:rgba(255,255,255,0.7);font-weight:500;transition:color 0.3s ease}
+.nav-links a:hover{color:#F9C441}
+.nav-links .nav-cta{font-size:18px;padding:18px 48px;margin-top:12px}
+.fade-left,.fade-right,.scale-in{opacity:0;transform:translateY(40px);transition:opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.fade-left.visible,.fade-right.visible,.scale-in.visible{opacity:1;transform:translateY(0)}
+.nav-hamburger{display:flex}
+.nav-logo svg{height:28px}
+.hero{padding:90px 20px 60px;min-height:auto}
+.hero-title{font-size:38px;letter-spacing:-1.5px}
+.hero-sub{font-size:16px;max-width:100%}
+.hero-buttons{flex-direction:column;width:100%}
+.btn-gold,.btn-outline{justify-content:center;width:100%;padding:16px 24px}
+.hero-stats{flex-direction:column;gap:20px}
+.hero-right{flex-direction:column}
+.h-card{width:100%}
+.section{padding:64px 20px}
+.s-label{font-size:12px}
+.s-title{font-size:30px;letter-spacing:-1px}
+.s-sub{font-size:15px}
+.v-card{flex-direction:column;gap:16px;padding:24px}
+.srv{width:100%;padding:28px 20px}
+.srv-big{flex-direction:column;text-align:center;padding:32px 24px}
+.srv-big .srv-i{margin:0 auto}
+.m-steps{flex-direction:column;gap:14px}
+.m-s{width:100%}
+.cta{padding:64px 20px}
+.cta-t{font-size:32px;letter-spacing:-1px}
+.cta-s{font-size:16px}
+.cta-btns{flex-direction:column;width:100%;align-items:stretch}
+.footer{padding:24px 20px}
+.ft-copy{padding:16px 20px}
+.diff-box{padding:28px}
+.vant-box{padding:28px}
+.chi-grid{gap:16px}
+}
+
+/* === SMALL MOBILE (max 400px) === */
+@media(max-width:400px){
+.hero-title{font-size:32px}
+.s-title{font-size:26px}
+.cta-t{font-size:28px}
+.stat-num{font-size:32px}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<div class="nav-logo">
+<svg viewBox="0 0 2752 1498" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M728 389L86 1040V1418H418L239 1241L387 1084L729 1418H1098L580 897L727 749L1289 1331L1370 1254V1040L728 389Z" fill="#F9C441"/><path d="M84 894V80H1369V895L728 252L84 894Z" fill="#4F6C6C"/><path d="M1476.97 1050.98V1113.21H1536.44V1121.28H1476.97V1183.93H1542.81V1192H1467.41V1042.91H1542.81V1050.98H1476.97ZM1613.57 1042.91C1638.78 1042.91 1658.17 1049.5 1671.77 1062.66C1685.5 1075.83 1692.37 1094.17 1692.37 1117.67C1692.37 1141.17 1685.5 1159.44 1671.77 1172.46C1658.17 1185.49 1638.78 1192 1613.57 1192H1571.74V1042.91H1613.57ZM1613.57 1183.93C1636.09 1183.93 1653.22 1178.12 1664.97 1166.51C1676.72 1154.76 1682.6 1138.48 1682.6 1117.67C1682.6 1096.71 1676.72 1080.36 1664.97 1068.61C1653.22 1056.86 1636.09 1050.98 1613.57 1050.98H1581.29V1183.93H1613.57ZM1730.83 1042.91V1192H1721.27V1042.91H1730.83ZM1775.42 1183.93H1830.85V1192H1765.86V1042.91H1775.42V1183.93ZM1862.11 1042.91V1192H1852.55V1042.91H1862.11ZM1905.85 1042.91V1136.14C1905.85 1152.99 1909.68 1165.38 1917.32 1173.31C1924.97 1181.1 1935.37 1184.99 1948.54 1184.99C1961.57 1184.99 1971.83 1181.1 1979.34 1173.31C1986.84 1165.52 1990.59 1153.14 1990.59 1136.14V1042.91H2000.15V1135.93C2000.15 1155.33 1995.48 1169.77 1986.13 1179.26C1976.79 1188.74 1964.26 1193.49 1948.54 1193.49C1932.83 1193.49 1920.15 1188.74 1910.53 1179.26C1901.04 1169.63 1896.3 1155.19 1896.3 1135.93V1042.91H1905.85ZM2173.14 1046.1V1192H2163.58V1066.06L2107.51 1192H2099.87L2043.59 1066.06V1192H2034.03V1046.1H2044.22L2103.69 1179.47L2163.15 1046.1H2173.14ZM2374.37 1042.91V1192H2364.81V1119.79H2277.74V1192H2268.18V1042.91H2277.74V1111.72H2364.81V1042.91H2374.37ZM2418.13 1042.91V1136.14C2418.13 1152.99 2421.95 1165.38 2429.6 1173.31C2437.24 1181.1 2447.65 1184.99 2460.82 1184.99C2473.84 1184.99 2484.11 1181.1 2491.61 1173.31C2499.12 1165.52 2502.87 1153.14 2502.87 1136.14V1042.91H2512.42V1135.93C2512.42 1155.33 2507.75 1169.77 2498.41 1179.26C2489.06 1188.74 2476.53 1193.49 2460.82 1193.49C2445.1 1193.49 2432.43 1188.74 2422.8 1179.26C2413.32 1169.63 2408.57 1155.19 2408.57 1135.93V1042.91H2418.13ZM2610.66 1114.91C2619.29 1116.46 2626.51 1120.71 2632.32 1127.65C2638.26 1134.59 2641.24 1142.73 2641.24 1152.07C2641.24 1159.72 2639.4 1166.59 2635.72 1172.67C2632.18 1178.62 2626.8 1183.36 2619.57 1186.9C2612.5 1190.3 2603.86 1192 2593.66 1192H2546.3V1042.91H2592.82C2607.68 1042.91 2618.87 1046.38 2626.37 1053.32C2634.02 1060.11 2637.84 1068.96 2637.84 1079.87C2637.84 1089.35 2635.29 1097.07 2630.19 1103.01C2625.1 1108.82 2618.58 1112.78 2610.66 1114.91ZM2555.86 1110.66H2593.24C2604.43 1110.66 2612.99 1108.04 2618.94 1102.8C2625.03 1097.42 2628.07 1090.06 2628.07 1080.71C2628.07 1071.65 2625.1 1064.5 2619.15 1059.26C2613.2 1054.03 2604.21 1051.41 2592.18 1051.41H2555.86V1110.66ZM2593.03 1183.72C2605.06 1183.72 2614.48 1180.89 2621.27 1175.22C2628.21 1169.42 2631.68 1161.49 2631.68 1151.44C2631.68 1141.53 2628.14 1133.67 2621.06 1127.86C2614.12 1121.92 2604.57 1118.94 2592.39 1118.94H2555.86V1183.72H2593.03Z" fill="white"/><path d="M1556.69 1280.52L1533.67 1363.84H1527.85L1505.07 1288.83L1481.93 1363.84H1476.35L1453.68 1280.52H1459.38L1479.31 1356.36L1502.22 1280.52H1508.15L1530.82 1356.84L1550.88 1280.52H1556.69ZM1627.99 1327.28C1627.99 1330.13 1627.91 1332.27 1627.75 1333.69H1572.09C1572.25 1339.47 1573.51 1344.33 1575.89 1348.29C1578.26 1352.25 1581.39 1355.21 1585.26 1357.19C1589.14 1359.17 1593.37 1360.16 1597.96 1360.16C1604.29 1360.16 1609.59 1358.62 1613.86 1355.53C1618.14 1352.37 1620.83 1348.09 1621.93 1342.71H1627.51C1626.25 1349.28 1623 1354.62 1617.78 1358.73C1612.56 1362.77 1605.95 1364.79 1597.96 1364.79C1591.95 1364.79 1586.57 1363.44 1581.82 1360.75C1577.07 1358.06 1573.35 1354.22 1570.66 1349.24C1567.97 1344.18 1566.63 1338.28 1566.63 1331.56C1566.63 1324.83 1567.93 1318.98 1570.55 1313.99C1573.24 1309.01 1576.95 1305.21 1581.7 1302.6C1586.45 1299.91 1591.87 1298.56 1597.96 1298.56C1604.13 1298.56 1609.47 1299.91 1613.98 1302.6C1618.57 1305.21 1622.05 1308.73 1624.43 1313.16C1626.8 1317.51 1627.99 1322.22 1627.99 1327.28ZM1622.65 1329.3C1622.88 1323.61 1621.86 1318.78 1619.56 1314.82C1617.35 1310.87 1614.3 1307.94 1610.42 1306.04C1606.55 1304.06 1602.35 1303.07 1597.84 1303.07C1593.33 1303.07 1589.14 1304.06 1585.26 1306.04C1581.46 1307.94 1578.34 1310.87 1575.89 1314.82C1573.51 1318.78 1572.25 1323.61 1572.09 1329.3H1622.65ZM1682.96 1316.37C1684.94 1311.14 1688.3 1306.87 1693.05 1303.55C1697.8 1300.22 1703.53 1298.56 1710.26 1298.56C1716.27 1298.56 1721.61 1299.91 1726.28 1302.6C1731.03 1305.29 1734.71 1309.13 1737.32 1314.11C1740.01 1319.1 1741.35 1324.91 1741.35 1331.56C1741.35 1338.2 1740.01 1344.06 1737.32 1349.12C1734.71 1354.11 1731.03 1357.98 1726.28 1360.75C1721.61 1363.44 1716.27 1364.79 1710.26 1364.79C1703.53 1364.79 1697.76 1363.13 1692.93 1359.8C1688.19 1356.48 1684.86 1352.21 1682.96 1346.99V1363.84H1677.62V1276.01H1682.96V1316.37ZM1735.9 1331.56C1735.9 1325.7 1734.79 1320.64 1732.57 1316.37C1730.36 1312.09 1727.23 1308.85 1723.2 1306.63C1719.24 1304.34 1714.65 1303.19 1709.43 1303.19C1704.44 1303.19 1699.93 1304.38 1695.9 1306.75C1691.86 1309.05 1688.7 1312.37 1686.41 1316.72C1684.11 1320.99 1682.96 1325.94 1682.96 1331.56C1682.96 1337.25 1684.11 1342.28 1686.41 1346.63C1688.7 1350.9 1691.86 1354.22 1695.9 1356.6C1699.93 1358.89 1704.44 1360.04 1709.43 1360.04C1714.65 1360.04 1719.24 1358.89 1723.2 1356.6C1727.23 1354.3 1730.36 1351.02 1732.57 1346.75C1734.79 1342.48 1735.9 1337.41 1735.9 1331.56ZM1811.95 1299.39V1363.84H1806.61V1349.83C1804.79 1354.74 1801.75 1358.5 1797.47 1361.11C1793.28 1363.64 1788.45 1364.91 1782.99 1364.91C1775.32 1364.91 1769.03 1362.57 1764.12 1357.9C1759.3 1353.16 1756.88 1346.15 1756.88 1336.9V1299.39H1762.11V1336.54C1762.11 1344.22 1764.04 1350.11 1767.92 1354.22C1771.8 1358.26 1777.06 1360.28 1783.71 1360.28C1790.67 1360.28 1796.21 1358.06 1800.32 1353.63C1804.51 1349.2 1806.61 1342.63 1806.61 1333.93V1299.39H1811.95ZM1834.15 1285.03C1832.89 1285.03 1831.82 1284.64 1830.95 1283.85C1830.08 1282.98 1829.64 1281.83 1829.64 1280.41C1829.64 1279.06 1830.08 1277.95 1830.95 1277.08C1831.82 1276.21 1832.89 1275.78 1834.15 1275.78C1835.42 1275.78 1836.49 1276.21 1837.36 1277.08C1838.23 1277.95 1838.66 1279.06 1838.66 1280.41C1838.66 1281.83 1838.23 1282.98 1837.36 1283.85C1836.49 1284.64 1835.42 1285.03 1834.15 1285.03ZM1836.76 1299.39V1363.84H1831.42V1299.39H1836.76ZM1861.68 1276.01V1363.84H1856.34V1276.01H1861.68ZM1877.94 1331.56C1877.94 1324.91 1879.24 1319.1 1881.85 1314.11C1884.54 1309.13 1888.22 1305.29 1892.89 1302.6C1897.64 1299.91 1903.02 1298.56 1909.03 1298.56C1915.6 1298.56 1921.29 1300.22 1926.12 1303.55C1930.95 1306.79 1934.35 1311.02 1936.33 1316.25V1276.01H1941.67V1363.84H1936.33V1346.75C1934.43 1352.05 1931.1 1356.4 1926.36 1359.8C1921.61 1363.13 1915.83 1364.79 1909.03 1364.79C1903.02 1364.79 1897.64 1363.44 1892.89 1360.75C1888.22 1357.98 1884.54 1354.11 1881.85 1349.12C1879.24 1344.06 1877.94 1338.2 1877.94 1331.56ZM1936.33 1331.56C1936.33 1325.94 1935.14 1320.99 1932.77 1316.72C1930.47 1312.37 1927.31 1309.05 1923.27 1306.75C1919.24 1304.38 1914.73 1303.19 1909.74 1303.19C1904.52 1303.19 1899.93 1304.34 1895.97 1306.63C1892.02 1308.85 1888.93 1312.09 1886.72 1316.37C1884.5 1320.64 1883.39 1325.7 1883.39 1331.56C1883.39 1337.41 1884.5 1342.48 1886.72 1346.75C1888.93 1351.02 1892.02 1354.3 1895.97 1356.6C1900.01 1358.89 1904.6 1360.04 1909.74 1360.04C1914.73 1360.04 1919.24 1358.89 1923.27 1356.6C1927.39 1354.22 1930.59 1350.9 1932.88 1346.63C1935.18 1342.28 1936.33 1337.25 1936.33 1331.56ZM2044.93 1299.39L2007.43 1394.1H2001.97L2013.95 1363.84L1986.89 1299.39H1992.71L2016.92 1357.9L2039.47 1299.39H2044.93ZM2085.21 1364.79C2079.2 1364.79 2073.78 1363.44 2068.95 1360.75C2064.13 1358.06 2060.33 1354.22 2057.56 1349.24C2054.87 1344.18 2053.52 1338.28 2053.52 1331.56C2053.52 1324.91 2054.91 1319.1 2057.68 1314.11C2060.45 1309.05 2064.24 1305.21 2069.07 1302.6C2073.98 1299.91 2079.43 1298.56 2085.45 1298.56C2091.46 1298.56 2096.88 1299.91 2101.71 1302.6C2106.53 1305.21 2110.29 1309.01 2112.98 1313.99C2115.75 1318.98 2117.14 1324.83 2117.14 1331.56C2117.14 1338.28 2115.75 1344.18 2112.98 1349.24C2110.21 1354.22 2106.38 1358.06 2101.47 1360.75C2096.64 1363.44 2091.22 1364.79 2085.21 1364.79ZM2085.21 1360.04C2089.88 1360.04 2094.23 1359.01 2098.27 1356.95C2102.38 1354.82 2105.66 1351.61 2108.12 1347.34C2110.57 1343.07 2111.8 1337.81 2111.8 1331.56C2111.8 1325.39 2110.57 1320.16 2108.12 1315.89C2105.66 1311.62 2102.42 1308.45 2098.38 1306.4C2094.35 1304.26 2090 1303.19 2085.33 1303.19C2080.66 1303.19 2076.31 1304.26 2072.27 1306.4C2068.32 1308.45 2065.11 1311.62 2062.66 1315.89C2060.21 1320.16 2058.98 1325.39 2058.98 1331.56C2058.98 1337.81 2060.17 1343.07 2062.54 1347.34C2065 1351.61 2068.2 1354.82 2072.16 1356.95C2076.19 1359.01 2080.54 1360.04 2085.21 1360.04ZM2187.81 1299.39V1363.84H2182.47V1349.83C2180.65 1354.74 2177.61 1358.5 2173.34 1361.11C2169.14 1363.64 2164.32 1364.91 2158.86 1364.91C2151.18 1364.91 2144.89 1362.57 2139.99 1357.9C2135.16 1353.16 2132.75 1346.15 2132.75 1336.9V1299.39H2137.97V1336.54C2137.97 1344.22 2139.91 1350.11 2143.78 1354.22C2147.66 1358.26 2152.92 1360.28 2159.57 1360.28C2166.53 1360.28 2172.07 1358.06 2176.18 1353.63C2180.38 1349.2 2182.47 1342.63 2182.47 1333.93V1299.39H2187.81ZM2212.62 1312.69C2214.21 1307.94 2217.02 1304.34 2221.05 1301.89C2225.09 1299.35 2230.23 1298.09 2236.48 1298.09V1303.67H2234.7C2228.37 1303.67 2223.11 1305.49 2218.91 1309.13C2214.72 1312.69 2212.62 1318.54 2212.62 1326.69V1363.84H2207.28V1299.39H2212.62V1312.69ZM2287.61 1312.69C2289.19 1307.94 2292 1304.34 2296.04 1301.89C2300.07 1299.35 2305.22 1298.09 2311.47 1298.09V1303.67H2309.69C2303.36 1303.67 2298.09 1305.49 2293.9 1309.13C2289.71 1312.69 2287.61 1318.54 2287.61 1326.69V1363.84H2282.27V1299.39H2287.61V1312.69ZM2381.8 1327.28C2381.8 1330.13 2381.72 1332.27 2381.56 1333.69H2325.9C2326.06 1339.47 2327.32 1344.33 2329.7 1348.29C2332.07 1352.25 2335.2 1355.21 2339.07 1357.19C2342.95 1359.17 2347.18 1360.16 2351.77 1360.16C2358.1 1360.16 2363.4 1358.62 2367.67 1355.53C2371.95 1352.37 2374.64 1348.09 2375.74 1342.71H2381.32C2380.06 1349.28 2376.81 1354.62 2371.59 1358.73C2366.37 1362.77 2359.76 1364.79 2351.77 1364.79C2345.76 1364.79 2340.38 1363.44 2335.63 1360.75C2330.88 1358.06 2327.16 1354.22 2324.47 1349.24C2321.78 1344.18 2320.44 1338.28 2320.44 1331.56C2320.44 1324.83 2321.74 1318.98 2324.36 1313.99C2327.05 1309.01 2330.76 1305.21 2335.51 1302.6C2340.26 1299.91 2345.68 1298.56 2351.77 1298.56C2357.94 1298.56 2363.28 1299.91 2367.79 1302.6C2372.38 1305.21 2375.86 1308.73 2378.24 1313.16C2380.61 1317.51 2381.8 1322.22 2381.8 1327.28ZM2376.46 1329.3C2376.69 1323.61 2375.67 1318.78 2373.37 1314.82C2371.16 1310.87 2368.11 1307.94 2364.23 1306.04C2360.36 1304.06 2356.16 1303.07 2351.65 1303.07C2347.14 1303.07 2342.95 1304.06 2339.07 1306.04C2335.27 1307.94 2332.15 1310.87 2329.7 1314.82C2327.32 1318.78 2326.06 1323.61 2325.9 1329.3H2376.46ZM2394.62 1331.56C2394.62 1324.91 2395.92 1319.1 2398.53 1314.11C2401.22 1309.13 2404.9 1305.29 2409.57 1302.6C2414.32 1299.91 2419.7 1298.56 2425.71 1298.56C2432.51 1298.56 2438.29 1300.22 2443.04 1303.55C2447.78 1306.87 2451.11 1311.1 2453.01 1316.25V1299.39H2458.35V1363.84H2453.01V1346.87C2451.11 1352.09 2447.74 1356.4 2442.92 1359.8C2438.17 1363.13 2432.43 1364.79 2425.71 1364.79C2419.7 1364.79 2414.32 1363.44 2409.57 1360.75C2404.9 1357.98 2401.22 1354.11 2398.53 1349.12C2395.92 1344.06 2394.62 1338.2 2394.62 1331.56ZM2453.01 1331.56C2453.01 1325.94 2451.82 1320.99 2449.45 1316.72C2447.15 1312.37 2443.99 1309.05 2439.95 1306.75C2435.92 1304.38 2431.41 1303.19 2426.42 1303.19C2421.2 1303.19 2416.61 1304.34 2412.65 1306.63C2408.7 1308.85 2405.61 1312.09 2403.4 1316.37C2401.18 1320.64 2400.07 1325.7 2400.07 1331.56C2400.07 1337.41 2401.18 1342.48 2403.4 1346.75C2405.61 1351.02 2408.7 1354.3 2412.65 1356.6C2416.69 1358.89 2421.28 1360.04 2426.42 1360.04C2431.41 1360.04 2435.92 1358.89 2439.95 1356.6C2444.07 1354.22 2447.27 1350.9 2449.56 1346.63C2451.86 1342.28 2453.01 1337.25 2453.01 1331.56ZM2483.13 1276.01V1363.84H2477.79V1276.01H2483.13ZM2505.44 1285.03C2504.17 1285.03 2503.11 1284.64 2502.24 1283.85C2501.37 1282.98 2500.93 1281.83 2500.93 1280.41C2500.93 1279.06 2501.37 1277.95 2502.24 1277.08C2503.11 1276.21 2504.17 1275.78 2505.44 1275.78C2506.71 1275.78 2507.77 1276.21 2508.65 1277.08C2509.52 1277.95 2509.95 1279.06 2509.95 1280.41C2509.95 1281.83 2509.52 1282.98 2508.65 1283.85C2507.77 1284.64 2506.71 1285.03 2505.44 1285.03ZM2508.05 1299.39V1363.84H2502.71V1299.39H2508.05ZM2535.58 1304.02V1346.63C2535.58 1351.38 2536.45 1354.66 2538.19 1356.48C2539.93 1358.22 2543.02 1359.09 2547.45 1359.09H2554.69V1363.84H2546.62C2541 1363.84 2536.85 1362.53 2534.16 1359.92C2531.55 1357.23 2530.24 1352.8 2530.24 1346.63V1304.02H2520.51V1299.39H2530.24V1283.02H2535.58V1299.39H2554.69V1304.02H2535.58ZM2619.09 1299.39L2581.59 1394.1H2576.13L2588.12 1363.84L2561.06 1299.39H2566.87L2591.09 1357.9L2613.64 1299.39H2619.09Z" fill="white"/></svg>
+</div>
+<div class="nav-links">
+<a class="nav-link" href="#chi-siamo">Chi Siamo</a>
+<a class="nav-link" href="#servizi">Servizi</a>
+<a class="nav-link" href="#metodo">Metodo</a>
+<a class="nav-link" href="#team">Team</a>
+<a class="nav-cta" href="#contatti">Contattaci</a>
+</div>
+<div class="nav-hamburger" onclick="this.classList.toggle('active');document.querySelector('.nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<section class="hero" style="padding-top:100px">
+<div class="hero-glow"></div>
+<div class="hero-glow-2"></div>
+<div class="hero-left">
+<div class="hero-badge fade-up">
+<div class="hero-badge-dot"></div>
+<span class="hero-badge-text">Innovativa &middot; Efficiente &middot; Affidabile</span>
+</div>
+<h1 class="hero-title fade-up fade-up-d1">Ristrutturare<br>diventa <span class="hero-highlight">semplice.</span></h1>
+<p class="hero-sub fade-up fade-up-d2">Un unico interlocutore per trasformare i tuoi spazi. Dal progetto alla realizzazione, chiavi in mano, con oltre 30 anni di esperienza.</p>
+<div class="hero-buttons fade-up fade-up-d3">
+<a class="btn-gold" href="#contatti">Prenota un Sopralluogo &rarr;</a>
+<a class="btn-outline" href="#metodo">Scopri il Metodo</a>
+</div>
+<div class="hero-stats fade-up fade-up-d4">
+<div class="stat"><div class="stat-num">30+</div><div class="stat-lab">Anni di esperienza</div></div>
+<div class="stat"><div class="stat-num">500+</div><div class="stat-lab">Progetti completati</div></div>
+<div class="stat"><div class="stat-num">100%</div><div class="stat-lab">Chiavi in mano</div></div>
+</div>
+</div>
+<div class="hero-right">
+<div class="h-card fade-right"><div class="h-card-icon">&#9998;</div><div class="h-card-body"><div class="h-card-t">Progettazione</div><div class="h-card-d">Design architettonico su misura</div></div></div>
+<div class="h-card fade-right fade-up-d1"><div class="h-card-icon">&#9733;</div><div class="h-card-body"><div class="h-card-t">Qualit&agrave; Premium</div><div class="h-card-d">Materiali selezionati, lavorazioni d'eccellenza</div></div></div>
+<div class="h-card fade-right fade-up-d2"><div class="h-card-icon">&#9889;</div><div class="h-card-body"><div class="h-card-t">Chiavi in Mano</div><div class="h-card-d">Gestiamo tutto, dall'inizio alla fine</div></div></div>
+<div class="h-card fade-right fade-up-d3"><div class="h-card-icon">&#128200;</div><div class="h-card-body"><div class="h-card-t">Consulenza Completa</div><div class="h-card-d">Dal progetto alla consulenza finanziaria</div></div></div>
+</div>
+</section>
+
+<section class="section chi-siamo" id="chi-siamo">
+<div class="s-header">
+<div class="s-label fade-up">// Chi Siamo</div>
+<h2 class="s-title fade-up fade-up-d1">Creiamo valore, con il cliente al centro.</h2>
+<p class="s-sub fade-up fade-up-d2">Edilium Hub trasforma ogni ristrutturazione in un'esperienza fluida e senza stress.</p>
+</div>
+<div class="chi-grid">
+<div class="chi-left fade-left">
+<div class="v-card"><div class="v-icon v-icon-gold">&#9670;</div><div class="v-body"><div class="v-t">Mission</div><p class="v-p">Rendere la ristrutturazione un processo semplice, un'esperienza piacevole all'insegna della rivalorizzazione degli ambienti.</p></div></div>
+<div class="v-card"><div class="v-icon v-icon-teal">&#9673;</div><div class="v-body"><div class="v-t">Vision</div><p class="v-p">Creare valore, mettere il cliente al centro del progetto, realizzare progetti estetico-funzionali che superano le aspettative.</p></div></div>
+<div class="v-card"><div class="v-icon v-icon-green">&#10003;</div><div class="v-body"><div class="v-t">Valori</div><p class="v-p">Cura dei dettagli, precisione e attenzione al cliente in ogni fase del progetto.</p></div></div>
+</div>
+<div class="chi-right fade-right">
+<div class="diff-box">
+<div class="diff-title">Cosa ci differenzia</div>
+<ul class="diff-list">
+<li class="diff-item"><span class="diff-dot"></span>Conosciamo i clienti e le loro necessit&agrave;</li>
+<li class="diff-item"><span class="diff-dot"></span>Rete capillare di Partners per ogni esigenza</li>
+<li class="diff-item"><span class="diff-dot"></span>Esperienza trentennale nel settore</li>
+<li class="diff-item"><span class="diff-dot"></span>Fornitori per ogni tipo di materiale</li>
+<li class="diff-item"><span class="diff-dot"></span>Consulenze dal progetto alla finanziaria</li>
+<li class="diff-item"><span class="diff-dot"></span>Ricerca bandi su misura</li>
+</ul>
+</div>
+<div class="vant-box">
+<div class="vant-t">&#9889; Un unico interlocutore</div>
+<p class="vant-p">Ci occupiamo di tutto noi. Tu risparmi tempo, noi realizziamo il tuo progetto con eccellenza.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section servizi" id="servizi">
+<div class="s-header">
+<div class="s-label fade-up">// Servizi</div>
+<h2 class="s-title fade-up fade-up-d1">Tutto ci&ograve; che serve, in un unico partner.</h2>
+<p class="s-sub fade-up fade-up-d2">Dalla progettazione alla manutenzione, copriamo ogni fase.</p>
+</div>
+<div class="srv-wrap fade-up">
+<div class="srv"><div class="srv-i">&#9998;</div><div class="srv-t">Progettazione Architettonica</div><p class="srv-d">Design personalizzato per ogni spazio</p></div>
+<div class="srv"><div class="srv-i">&#9634;</div><div class="srv-t">Rilievo Metrico</div><p class="srv-d">Misurazioni precise e documentazione</p></div>
+<div class="srv"><div class="srv-i">&#8962;</div><div class="srv-t">Intermediazione Immobiliare</div><p class="srv-d">Supporto compravendita e valorizzazione</p></div>
+<div class="srv"><div class="srv-i">&#9783;</div><div class="srv-t">Direzione Lavori</div><p class="srv-d">Gestione completa del cantiere</p></div>
+<div class="srv"><div class="srv-i">&#9889;</div><div class="srv-t">Impianti Elettrici</div><p class="srv-d">Installazione e certificazione a norma</p></div>
+<div class="srv"><div class="srv-i">&#9748;</div><div class="srv-t">Impianti Idraulici</div><p class="srv-d">Soluzioni efficienti e moderne</p></div>
+<div class="srv"><div class="srv-i">&#9788;</div><div class="srv-t">Fotovoltaico</div><p class="srv-d">Energia solare, risparmi concreti</p></div>
+<div class="srv"><div class="srv-i">&#128270;</div><div class="srv-t">Videosorveglianza</div><p class="srv-d">Sicurezza smart e monitoraggio 24/7</p></div>
+<div class="srv srv-big"><div class="srv-i">&#9733;</div><div class="srv-big-body"><div class="srv-t">Chiavi in Mano</div><p class="srv-d">La soluzione completa: dalla progettazione alla consegna. Un unico referente, zero pensieri.</p></div></div>
+<div class="srv"><div class="srv-i">&#9881;</div><div class="srv-t">Manutenzione</div><p class="srv-d">Interventi rapidi e programmati</p></div>
+</div>
+</section>
+
+<section class="section metodo" id="metodo">
+<div class="s-header">
+<div class="s-label fade-up">// Il Metodo</div>
+<h2 class="s-title fade-up fade-up-d1">Dall'idea alla realizzazione, step by step.</h2>
+<p class="s-sub fade-up fade-up-d2">Ogni progetto segue un processo chiaro e trasparente.</p>
+</div>
+<div class="m-steps fade-up">
+<div class="m-s"><div class="m-n">01</div><div class="m-t">Sopralluogo</div><p class="m-d">Studio di fattibilit&agrave; e valutazione richieste con proposte migliorative.</p></div>
+<div class="m-arr">&rarr;</div>
+<div class="m-s"><div class="m-n">02</div><div class="m-t">Progetto</div><p class="m-d">Rilievo tecnico, redazione progetto e selezione professionisti.</p></div>
+<div class="m-arr">&rarr;</div>
+<div class="m-s"><div class="m-n">03</div><div class="m-t">Preventivo</div><p class="m-d">Preventivo dettagliato. Accettazione, stipula e data inizio lavori.</p></div>
+<div class="m-arr">&rarr;</div>
+<div class="m-s"><div class="m-n">04</div><div class="m-t">Esecuzione</div><p class="m-d">Lavori a perfetta regola d'arte con controllo di ogni dettaglio.</p></div>
+<div class="m-arr">&rarr;</div>
+<div class="m-s"><div class="m-n">05</div><div class="m-t">Consegna</div><p class="m-d">Verifica finale, collaudo e consegna. Il tuo spazio, trasformato.</p></div>
+</div>
+</section>
+
+<section class="section target" id="target">
+<div class="s-header">
+<div class="s-label fade-up">// Per Chi</div>
+<h2 class="s-title fade-up fade-up-d1">Soluzioni su misura per ogni esigenza.</h2>
+</div>
+<div class="t-cards fade-up">
+<div class="t-c"><div class="t-ic">&#127968;</div><h3 class="t-t">Privati</h3><p class="t-d">Ristrutturazioni residenziali, dalla singola stanza all'intero appartamento. La casa che hai sempre desiderato.</p></div>
+<div class="t-c"><div class="t-ic">&#127970;</div><h3 class="t-t">Aziende</h3><p class="t-d">Ambienti di lavoro funzionali e rappresentativi. Uffici, negozi e spazi commerciali per il tuo business.</p></div>
+<div class="t-c"><div class="t-ic">&#128200;</div><h3 class="t-t">Investitori</h3><p class="t-d">Massimizza il valore dei tuoi immobili con ristrutturazioni strategiche e consulenza dedicata.</p></div>
+</div>
+</section>
+
+<section class="section team" id="team">
+<div class="s-header">
+<div class="s-label fade-up">// Il Team</div>
+<h2 class="s-title fade-up fade-up-d1">Le persone dietro ogni progetto.</h2>
+</div>
+<div class="tm-cards fade-up">
+<div class="tm-c"><div class="tm-av">GD</div><div class="tm-info"><div class="tm-name">Ing. Giuseppe Decri</div><div class="tm-role">Direzione Tecnica</div></div></div>
+<div class="tm-c"><div class="tm-av">MP</div><div class="tm-info"><div class="tm-name">Maria Passarella</div><div class="tm-role">Area Commerciale</div></div></div>
+</div>
+</section>
+
+<section class="cta" id="contatti">
+<div class="cta-glow"></div>
+<h2 class="cta-t scale-in">Pronto a trasformare<br>i tuoi <span class="hero-highlight">spazi?</span></h2>
+<p class="cta-s fade-up">Contattaci per un sopralluogo gratuito e senza impegno. Il primo passo verso il tuo progetto ideale.</p>
+<div class="cta-btns fade-up fade-up-d1">
+<a class="btn-gold" href="mailto:info@ediliumhub.it">Contattaci Ora &rarr;</a>
+<a class="btn-outline" href="tel:+39000000000">Prenota Sopralluogo</a>
+</div>
+</section>
+
+<footer class="footer">
+<div class="ft-logo">
+<svg viewBox="0 0 2752 1498" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M728 389L86 1040V1418H418L239 1241L387 1084L729 1418H1098L580 897L727 749L1289 1331L1370 1254V1040L728 389Z" fill="#F9C441"/><path d="M84 894V80H1369V895L728 252L84 894Z" fill="#4F6C6C"/><path d="M1476.97 1050.98V1113.21H1536.44V1121.28H1476.97V1183.93H1542.81V1192H1467.41V1042.91H1542.81V1050.98H1476.97ZM1613.57 1042.91C1638.78 1042.91 1658.17 1049.5 1671.77 1062.66C1685.5 1075.83 1692.37 1094.17 1692.37 1117.67C1692.37 1141.17 1685.5 1159.44 1671.77 1172.46C1658.17 1185.49 1638.78 1192 1613.57 1192H1571.74V1042.91H1613.57ZM1613.57 1183.93C1636.09 1183.93 1653.22 1178.12 1664.97 1166.51C1676.72 1154.76 1682.6 1138.48 1682.6 1117.67C1682.6 1096.71 1676.72 1080.36 1664.97 1068.61C1653.22 1056.86 1636.09 1050.98 1613.57 1050.98H1581.29V1183.93H1613.57ZM1730.83 1042.91V1192H1721.27V1042.91H1730.83ZM1775.42 1183.93H1830.85V1192H1765.86V1042.91H1775.42V1183.93ZM1862.11 1042.91V1192H1852.55V1042.91H1862.11ZM1905.85 1042.91V1136.14C1905.85 1152.99 1909.68 1165.38 1917.32 1173.31C1924.97 1181.1 1935.37 1184.99 1948.54 1184.99C1961.57 1184.99 1971.83 1181.1 1979.34 1173.31C1986.84 1165.52 1990.59 1153.14 1990.59 1136.14V1042.91H2000.15V1135.93C2000.15 1155.33 1995.48 1169.77 1986.13 1179.26C1976.79 1188.74 1964.26 1193.49 1948.54 1193.49C1932.83 1193.49 1920.15 1188.74 1910.53 1179.26C1901.04 1169.63 1896.3 1155.19 1896.3 1135.93V1042.91H1905.85ZM2173.14 1046.1V1192H2163.58V1066.06L2107.51 1192H2099.87L2043.59 1066.06V1192H2034.03V1046.1H2044.22L2103.69 1179.47L2163.15 1046.1H2173.14ZM2374.37 1042.91V1192H2364.81V1119.79H2277.74V1192H2268.18V1042.91H2277.74V1111.72H2364.81V1042.91H2374.37ZM2418.13 1042.91V1136.14C2418.13 1152.99 2421.95 1165.38 2429.6 1173.31C2437.24 1181.1 2447.65 1184.99 2460.82 1184.99C2473.84 1184.99 2484.11 1181.1 2491.61 1173.31C2499.12 1165.52 2502.87 1153.14 2502.87 1136.14V1042.91H2512.42V1135.93C2512.42 1155.33 2507.75 1169.77 2498.41 1179.26C2489.06 1188.74 2476.53 1193.49 2460.82 1193.49C2445.1 1193.49 2432.43 1188.74 2422.8 1179.26C2413.32 1169.63 2408.57 1155.19 2408.57 1135.93V1042.91H2418.13ZM2610.66 1114.91C2619.29 1116.46 2626.51 1120.71 2632.32 1127.65C2638.26 1134.59 2641.24 1142.73 2641.24 1152.07C2641.24 1159.72 2639.4 1166.59 2635.72 1172.67C2632.18 1178.62 2626.8 1183.36 2619.57 1186.9C2612.5 1190.3 2603.86 1192 2593.66 1192H2546.3V1042.91H2592.82C2607.68 1042.91 2618.87 1046.38 2626.37 1053.32C2634.02 1060.11 2637.84 1068.96 2637.84 1079.87C2637.84 1089.35 2635.29 1097.07 2630.19 1103.01C2625.1 1108.82 2618.58 1112.78 2610.66 1114.91ZM2555.86 1110.66H2593.24C2604.43 1110.66 2612.99 1108.04 2618.94 1102.8C2625.03 1097.42 2628.07 1090.06 2628.07 1080.71C2628.07 1071.65 2625.1 1064.5 2619.15 1059.26C2613.2 1054.03 2604.21 1051.41 2592.18 1051.41H2555.86V1110.66ZM2593.03 1183.72C2605.06 1183.72 2614.48 1180.89 2621.27 1175.22C2628.21 1169.42 2631.68 1161.49 2631.68 1151.44C2631.68 1141.53 2628.14 1133.67 2621.06 1127.86C2614.12 1121.92 2604.57 1118.94 2592.39 1118.94H2555.86V1183.72H2593.03Z" fill="white"/><path d="M1556.69 1280.52L1533.67 1363.84H1527.85L1505.07 1288.83L1481.93 1363.84H1476.35L1453.68 1280.52H1459.38L1479.31 1356.36L1502.22 1280.52H1508.15L1530.82 1356.84L1550.88 1280.52H1556.69ZM1627.99 1327.28C1627.99 1330.13 1627.91 1332.27 1627.75 1333.69H1572.09C1572.25 1339.47 1573.51 1344.33 1575.89 1348.29C1578.26 1352.25 1581.39 1355.21 1585.26 1357.19C1589.14 1359.17 1593.37 1360.16 1597.96 1360.16C1604.29 1360.16 1609.59 1358.62 1613.86 1355.53C1618.14 1352.37 1620.83 1348.09 1621.93 1342.71H1627.51C1626.25 1349.28 1623 1354.62 1617.78 1358.73C1612.56 1362.77 1605.95 1364.79 1597.96 1364.79C1591.95 1364.79 1586.57 1363.44 1581.82 1360.75C1577.07 1358.06 1573.35 1354.22 1570.66 1349.24C1567.97 1344.18 1566.63 1338.28 1566.63 1331.56C1566.63 1324.83 1567.93 1318.98 1570.55 1313.99C1573.24 1309.01 1576.95 1305.21 1581.7 1302.6C1586.45 1299.91 1591.87 1298.56 1597.96 1298.56C1604.13 1298.56 1609.47 1299.91 1613.98 1302.6C1618.57 1305.21 1622.05 1308.73 1624.43 1313.16C1626.8 1317.51 1627.99 1322.22 1627.99 1327.28ZM1622.65 1329.3C1622.88 1323.61 1621.86 1318.78 1619.56 1314.82C1617.35 1310.87 1614.3 1307.94 1610.42 1306.04C1606.55 1304.06 1602.35 1303.07 1597.84 1303.07C1593.33 1303.07 1589.14 1304.06 1585.26 1306.04C1581.46 1307.94 1578.34 1310.87 1575.89 1314.82C1573.51 1318.78 1572.25 1323.61 1572.09 1329.3H1622.65Z" fill="white"/></svg>
+</div>
+<div class="ft-links">
+<a class="ft-link" href="mailto:info@ediliumhub.it">info@ediliumhub.it</a>
+<a class="ft-link" href="#">Edilium Hub Srls</a>
+<a class="ft-link" href="#">P.IVA: XXXXXXXXXXX</a>
+</div>
+</footer>
+<div class="ft-copy">&copy; 2026 Edilium Hub Srls. Tutti i diritti riservati.</div>
+
+<script>
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up,.fade-left,.fade-right,.scale-in').forEach(el => {
+  observer.observe(el);
+});
+
+// Navbar shrink on scroll
+const navbar = document.querySelector('.navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+}, { passive: true });
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.remove('open');
+    document.querySelector('.nav-hamburger').classList.remove('active');
+  });
+});
+
+// Active nav link highlight on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 120;
+    if (window.scrollY >= top) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === '#' + current
+      ? '#F9C441' : 'rgba(255,255,255,0.5)';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
